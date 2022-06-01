@@ -78,9 +78,9 @@ class Wall: # стена из кирпичей
                  y):
         self.br_x = x
         self.br_y = y
-        c='#' + str("{0:X}".format(randint(50,255))) + \
-                str("{0:X}".format(randint(50,255))) + \
-                str("{0:X}".format(randint(50,255))) # цвет в формате '#12AB5F'
+        c='#' + str("{0:X}".format(randint(100,255))) + \
+                str("{0:X}".format(randint(100,255))) + \
+                str("{0:X}".format(randint(100,255))) # цвет в формате '#12AB5F'
         self.brick_id = canvas.create_rectangle(self.br_x,
                                                 self.br_y,
                                                 self.br_x + BRICK_W,
@@ -89,11 +89,13 @@ class Wall: # стена из кирпичей
                                                 width = 3,
                                                 outline = c#'gold'
                                                 )
-
-        
+       
     # методы класса
-    def move(self):
-        pass
+    def kill_brick(self):
+        #print(number)
+        #canvas.delete(balls[number].ball_id)
+        canvas.delete(self.brick_id)
+        #brick.pop(number)
 
 def canvas_left_click(event):
     x, y = event.x, event.y
@@ -144,14 +146,20 @@ def main():
     canvas.bind('<Button-1>', canvas_left_click)
     canvas.bind('<Motion>', canvas_mouse_motion)
 
-    # create wall
-    #bricks=[]
-    #for i in range(WALL_X):
-    #    for j in range(WALL_Y):
-    #        bricks.append = Brick(i, j)
+    brick=[]
+    dy=100 # смещение кирпичей от верха
+    for j in range(WALL_Y):
+        for i in range(WALL_X):
+            x = BRICK_S + i*(BRICK_W + BRICK_S)
+            y = dy + j*(BRICK_H + BRICK_S)
+            brick.append(Wall(x ,y))
+            
     
-    dy=100
-    brick = [Wall(BRICK_S + i*(BRICK_W + BRICK_S) , dy + j*(BRICK_H + BRICK_S)) for j in range(WALL_Y) for i in range(WALL_X)]
+    
+    #brick = [Wall(BRICK_S + i*(BRICK_W + BRICK_S) , dy + j*(BRICK_H + BRICK_S)) for j in range(WALL_Y) for i in range(WALL_X)]
+
+    brick[0].kill_brick()
+
 
     tick()
     root.mainloop()
