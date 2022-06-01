@@ -2,17 +2,18 @@ import tkinter as tk
 from random import randint
 from math import hypot
 
-WIDTH = 600
-HEIGHT = 400
-#COUNT_BALLS = 10
-#CANNON_X = 20
-#CANNON_Y = HEIGHT - 20
+BRICK_W = 40 # ширина кирпича 
+BRICK_H = 10 # высота кирпича
+BRICK_S = 5 # промежуток между кирпичами
 
-WALL_X = 10 # count bricks x
-WALL_Y = 4  # count bricks y
-BRICK_W = 40
-BRICK_H = 10
-TABLE_H = 10
+WALL_X = 10 # количество кирпичей по x
+WALL_Y = 4  # количество кирпичей по y
+# вычисляем ширину игрового пространства (холста)
+WIDTH = WALL_X * BRICK_W + BRICK_S * (WALL_X + 1) # промежутков на один больше чем кирпичей
+HEIGHT = BRICK_H * WALL_Y * 10 # высота холста в N раза больше высоты кирпичей
+CANVAS_COLOR = '#212f3c' # цвет холста
+
+TABLE_H = 10 # высота ракетки
 
 class Table: # рвкетка
     # конструктор
@@ -54,8 +55,8 @@ class Ball: # летающий шарик
                                           self.ball_y - self.ball_r,
                                           self.ball_x + self.ball_r,
                                           self.ball_y + self.ball_r,
-                                          fill = 'white',
-                                          width = 3,
+                                          fill = 'light green',
+                                          width = 0,
                                           outline='gold'
                                           )
         
@@ -69,10 +70,33 @@ class Ball: # летающий шарик
         self.ball_y += self.dy
         canvas.move(self.ball_id, self.dx, self.dy)
 
+
+class Wall: # стена из кирпичей
+    # конструктор
+    def __init__(self,
+                 x,
+                 y):
+        self.br_x = x
+        self.br_y = y
+        c='#' + str("{0:X}".format(randint(50,255))) + \
+                str("{0:X}".format(randint(50,255))) + \
+                str("{0:X}".format(randint(50,255))) # цвет в формате '#12AB5F'
+        self.brick_id = canvas.create_rectangle(self.br_x,
+                                                self.br_y,
+                                                self.br_x + BRICK_W,
+                                                self.br_y + BRICK_H,
+                                                fill = c,
+                                                width = 3,
+                                                outline = c#'gold'
+                                                )
+
+        
+    # методы класса
+    def move(self):
+        pass
+
 def canvas_left_click(event):
     x, y = event.x, event.y
-    
-    
     #    canvas.create_text(WIDTH/2, HEIGHT/2, text = "GAME OVER", font = "Ubuntu 36")
         
     
@@ -97,14 +121,23 @@ def main():
     root.geometry('%dx%d+%d+%d' % (WIDTH+100, HEIGHT, xcenter, ycenter))
     root.configure(background = '#3498db')
     # настройка холста (игрового поля)
-    canvas = tk.Canvas(root, background = '#212f3c', width=WIDTH, height=HEIGHT)
+    canvas = tk.Canvas(root, background = CANVAS_COLOR, width=WIDTH, height=HEIGHT)
     canvas.pack(side=tk.RIGHT)
+    
+    #a=canvas.create_text(10,10, text = "LEVEL 1",font='28')
+    
+    """
+    label_level = tk.Label(text = "LEVEL 1")
+    label_level.pack(side=tk.LEFT)
+
+    label_score = tk.Label(text = "SCORE 0")
+    label_score.pack(side=tk.TOP)
+    """   
     #canvas.pack(fill=tk.BOTH, expand=1)
     
     table = Table(250,250,40)
-    ball = Ball()#220,220,10)
-    #f2 = Table(100,100,50)
-    #f2 = Table(150,100,50)
+    ball = Ball()
+    
     
 
     
@@ -112,12 +145,13 @@ def main():
     canvas.bind('<Motion>', canvas_mouse_motion)
 
     # create wall
-    #color = 'blue'
     #bricks=[]
     #for i in range(WALL_X):
     #    for j in range(WALL_Y):
     #        bricks.append = Brick(i, j)
-
+    
+    dy=100
+    brick = [Wall(BRICK_S + i*(BRICK_W + BRICK_S) , dy + j*(BRICK_H + BRICK_S)) for j in range(WALL_Y) for i in range(WALL_X)]
 
     tick()
     root.mainloop()
