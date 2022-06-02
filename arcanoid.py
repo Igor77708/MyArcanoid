@@ -14,6 +14,10 @@ HEIGHT = BRICK_H * WALL_Y * 10 # высота холста в N раза бол�
 CANVAS_COLOR = '#212f3c' # цвет холста
 
 TABLE_H = 10 # высота ракетки
+FLAG_FIRST_CLICK = 0
+
+# рисуем ракетку посередине, почти внизе
+table_start_x, table_start_y = WIDTH/2, HEIGHT - 20
 
 class Table: # рвкетка
     # конструктор
@@ -31,12 +35,13 @@ class Table: # рвкетка
                                                 table_x + table_w,
                                                 table_y + TABLE_H,
                                                 fill = 'orange',
-                                                width = 3,
+                                                width = 0,
                                                 outline='yellow'
                                                 )
 
     # методы класса
     def move(self, xnew, ynew):
+
         xold, yold = self.table_x, self.table_y
         dx = xnew - xold
         dy = ynew - yold
@@ -47,8 +52,8 @@ class Table: # рвкетка
 class Ball: # летающий шарик 
     # конструктор
     def __init__(self):
-        self.ball_x = 220
-        self.ball_y = 220
+        self.ball_x = table_start_x
+        self.ball_y = table_start_y - TABLE_H * 2
         self.ball_r = 10
         self.dx, self.dy = -2, -10#randint(-10,10), randint(-10,-1)
         self.ball_id = canvas.create_oval(self.ball_x - self.ball_r,
@@ -68,7 +73,9 @@ class Ball: # летающий шарик
             self.dy = -self.dy
         self.ball_x += self.dx
         self.ball_y += self.dy
-        canvas.move(self.ball_id, self.dx, self.dy)
+        if FLAG_FIRST_CLICK == 0:
+            #print(FLAG_FIRST_CLICK)
+            canvas.move(self.ball_id, self.dx, self.dy)
 
 
 class Wall: # стена из кирпичей
@@ -100,11 +107,12 @@ class Wall: # стена из кирпичей
 def canvas_left_click(event):
     x, y = event.x, event.y
     #    canvas.create_text(WIDTH/2, HEIGHT/2, text = "GAME OVER", font = "Ubuntu 36")
-        
+    FLAG_FIRST_CLICK = 1
     
 def canvas_mouse_motion(event):
     x, y = event.x, event.y
     table.move(x,y)
+    
     
 
 def tick():
@@ -136,8 +144,9 @@ def main():
     label_score.pack(side=tk.TOP)
     """   
     #canvas.pack(fill=tk.BOTH, expand=1)
+
+    table = Table(table_start_x, table_start_y, 40)
     
-    table = Table(250,250,40)
     ball = Ball()
     
     
