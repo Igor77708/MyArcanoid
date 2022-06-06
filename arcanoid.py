@@ -15,7 +15,7 @@ CANVAS_COLOR = '#212f3c' # цвет холста
 
 SPACE_TOP = 100 # смещение кирпичей от верха
 TABLE_H = 10 # высота ракетки
-
+TABLE_W = 40 # ширина ракетки
 # рисуем ракетку посередине, почти внизу
 table_start_x, table_start_y = WIDTH/2, HEIGHT - 20
 
@@ -23,13 +23,15 @@ class Table: # ракетка
     # конструктор
     def __init__(self,
                  table_x,
-                 table_y,
-                 table_w
-                 ):
+                 table_y
+                 ):#,
+                 #table_w
+                 #):
         self.table_x = table_x
         self.table_y = table_y
-        self.table_w = table_w
-        
+        #self.table_w = TABLE_W
+        '''
+        # прямоугольня ракетка
         self.table_id = canvas.create_rectangle(table_x - table_w,
                                                 table_y - TABLE_H,
                                                 table_x + table_w,
@@ -38,7 +40,18 @@ class Table: # ракетка
                                                 width = 0,
                                                 outline='yellow'
                                                 )
-
+        '''
+        # дуговая ракетка
+        self.table_id = canvas.create_oval(table_x - TABLE_W,
+                                           table_y - TABLE_H,
+                                           table_x + TABLE_W,
+                                           table_y + TABLE_H,
+                                           fill = 'orange',
+                                           #stipple='gray25',
+                                           width = 0,
+                                           outline='yellow'
+                                                )
+        
     # метод класса - ставим ракетку на новые координаты
     def move_table(self, xnew, ynew):
         xold, yold = self.table_x, self.table_y
@@ -71,7 +84,7 @@ class Ball: # летающий шарик
             self.dx = -self.dx
         # проверяем на столкновение с низом
         if self.ball_y + self.ball_r > HEIGHT:
-            #ball.game_over()
+            ball.game_over()
             self.dy = -self.dy
         # проверяем на столкновение с верхом
         if self.ball_y - self.ball_r <= 0:
@@ -85,6 +98,8 @@ class Ball: # летающий шарик
         for f in overlapping: # просмотрим кортеж с номерами встреченых объектов
             if f == 1: # первый созданный объект это ракетка
                 self.dy = -self.dy
+                self.dx=(self.ball_x - table.table_x)/5 # меняем угол отскока
+                            #в зависим. от месте соударения шарика по ракетке
             elif f == 2: # второй - это сам шарик
                 pass
             else:
@@ -108,7 +123,6 @@ class Ball: # летающий шарик
                            fill = 'red',
                            font='Arial 50')
         self.dx, self.dy = 0, 0
-        
 
     def game_win(self):
             canvas.create_text(WIDTH/2, SPACE_TOP/2,
@@ -183,7 +197,7 @@ def main():
     
 
     # создаем ракетку
-    table = Table(table_start_x, table_start_y, 40)
+    table = Table(table_start_x, table_start_y)
 
     # создаем шарик
     ball = Ball()
