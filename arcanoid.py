@@ -3,7 +3,7 @@ from random import randint
 from math import hypot
 
 BRICK_W = 40 # ширина кирпича 
-BRICK_H = 10 # высота кирпича
+BRICK_H = 20 # высота кирпича
 BRICK_S = 5 # промежуток между кирпичами
 
 WALL_X = 10 # количество кирпичей по x
